@@ -1,0 +1,149 @@
+#include <iostream>
+#include <cstdlib>
+#include <ctime>
+#include <conio.h>
+
+using namespace std;
+
+void makeGrid(char arr[][62], char player[][3], int playerPosition[], const int rows, const int cols);
+void showGrid(char arr[][62], const int rows, const int cols);
+void movePlayer(char arr[][62], char player[][3], int playerPosition[], const int rows, const int cols);
+
+int main()
+{
+	srand(time(0));
+	const int rows = 32, cols = 62;
+	char grid[rows][cols];
+	char player[3][3] = { {' ','*',' '},{'\\','|','/'},{'|','|','|'} };
+	int playerPosition[2] = { 0,0 };
+	makeGrid(grid, player, playerPosition, rows, cols);
+
+
+	while (true)
+	{
+		system("CLS");
+		showGrid(grid, rows, cols);
+		movePlayer(grid, player, playerPosition, rows, cols);
+	}
+
+
+	system("pause");
+	return 0;
+}
+
+void makeGrid(char arr[][62], char player[][3], int playerPosition[], const int rows, const int cols)
+{
+	for (int i = 0; i < rows; i++)
+	{
+		for (int j = 0; j < cols; j++)
+		{
+			if (i == 0 || i == rows - 1)
+			{
+				arr[i][j] = '_';
+			}
+			else if (j == 0 || j == cols - 1)
+			{
+				arr[i][j] = '|';
+			}
+			else
+			{
+				arr[i][j] = ' ';
+			}
+		}
+	}
+
+
+	int Rs = 7, Re = rows / 3;
+	int Cs = 1, Ce = cols / 3;
+
+
+	int r, c;
+	do
+	{
+		r = rand() % (Re + 1);
+	} while (r < Rs || r >= Re);
+
+	do
+	{
+		c = rand() % (Ce + 1);
+	} while (c < Cs || c >= Ce);
+	playerPosition[0] = r;
+	playerPosition[1] = c;
+	r *= 3, c *= 3;
+
+	for (int i = r; i < r + 3; i++)
+	{
+		for (int j = c; j < c + 3; j++)
+		{
+			arr[i][j] = player[i - r][j - c];
+		}
+	}
+
+}
+
+void showGrid(char arr[][62], const int rows, const int cols)
+{
+	for (int i = 0; i < rows; i++)
+	{
+		for (int j = 0; j < cols; j++)
+		{
+			cout << arr[i][j];
+		}
+		cout << endl;
+	}
+}
+
+void movePlayer(char arr[][62], char player[][3], int playerPosition[], const int rows, const int cols)
+{
+	for (int i = playerPosition[0] * 3; i < playerPosition[0] * 3 + 3; i++)
+	{
+		for (int j = playerPosition[1] * 3; j < playerPosition[1] * 3 + 3; j++)
+		{
+			arr[i][j] = ' ';
+		}
+	}
+	int Rs = 7, Re = rows / 3;
+	int Cs = 1, Ce = cols / 3;
+	char c;
+	c = _getch();
+	switch (c)
+	{
+	case 'w':
+	case 'W':
+		if (playerPosition[0] - 1 >= Rs)
+		{
+			playerPosition[0]--;
+		}
+		break;
+	case 'a':
+	case 'A':
+		if (playerPosition[1] - 1 >= Cs)
+		{
+			playerPosition[1]--;
+		}
+		break;
+	case 'S':
+	case 's':
+		if (playerPosition[0] + 1 < Re)
+		{
+			playerPosition[0]++;
+		}
+		break;
+	case 'D':
+	case 'd':
+		if (playerPosition[1] + 1 < Ce)
+		{
+			playerPosition[1]++;
+		}
+		break;
+	default:
+		break;
+	}
+	for (int i = playerPosition[0] * 3; i < playerPosition[0] * 3 + 3; i++)
+	{
+		for (int j = playerPosition[1] * 3; j < playerPosition[1] * 3 + 3; j++)
+		{
+			arr[i][j] = player[i - playerPosition[0] * 3][j - playerPosition[1] * 3];
+		}
+	}
+}
